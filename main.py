@@ -1,31 +1,32 @@
 import sys
 import random
 
-from PyQt5 import uic
+from ui import Ui_MainWindow
 from PyQt5.QtGui import QPainter, QColor
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtCore import QRect
 
 
-class MyWidget(QMainWindow):
+class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('UI.ui', self)
+        self.setupUi(self)
         self.circles_params = []
         self.pushButton.clicked.connect(self.add_circle)
 
     def paintEvent(self, event):
         qp = QPainter()
         qp.begin(self)
-        qp.setBrush(QColor("yellow"))
-        for (x, y), radius in self.circles_params:
+        for (x, y), radius, color in self.circles_params:
+            qp.setBrush(QColor(*color))
             qp.drawEllipse(QRect(x, y, radius, radius))
         qp.end()
 
     def add_circle(self):
         diameter = random.randint(5, 50)
         cords = random.randint(0, self.width() - diameter), random.randint(0, self.height() - diameter)
-        self.circles_params.append((cords, diameter))
+        color = [random.randint(0, 255) for _ in range(3)]
+        self.circles_params.append((cords, diameter, color))
         self.repaint()
 
 
